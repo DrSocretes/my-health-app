@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Steady: Daily Health Companion</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f6f5;--surf:#fff;--ink:#12302e;--mute:#4c6563;--line:#c9d8d5;--acc:#1c5fa8;--acc-ink:#fff;--ok:#1b6e3f;--okbg:#e1f3e8;--warn:#8a5a00;--warnbg:#fff1cf;--bad:#a8211a;--badbg:#fde3e1;--r:18px;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1c1b;--surf:#18292800;--surf:#182928;--ink:#e8f2f0;--mute:#a3bbb8;--line:#2f4846;--acc:#7db6ee;--acc-ink:#0a1a2b;--ok:#7fd9a2;--okbg:#14382a;--warn:#f2c35c;--warnbg:#3a2e0e;--bad:#ff9d96;--badbg:#431a18}}
+:root[data-theme="dark"]{--bg:#0f1c1b;--surf:#182928;--ink:#e8f2f0;--mute:#a3bbb8;--line:#2f4846;--acc:#7db6ee;--acc-ink:#0a1a2b;--ok:#7fd9a2;--okbg:#14382a;--warn:#f2c35c;--warnbg:#3a2e0e;--bad:#ff9d96;--badbg:#431a18}
+*{box-sizing:border-box}
+html{font-size:19px;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",Verdana,"Segoe UI",sans-serif;line-height:1.5;padding-bottom:6.5rem}
+main{max-width:640px;margin:0 auto;padding:1rem}
+h1{font-size:1.9rem;line-height:1.15;margin:.2rem 0 .3rem}
+h2{font-size:1.3rem;margin:1.6rem 0 .6rem}
+p{margin:.3rem 0}
+.mute{color:var(--mute)}
+.card{background:var(--surf);border:2px solid var(--line);border-radius:var(--r);padding:1rem;margin:.7rem 0}
+.row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:2px solid var(--ink);background:var(--surf);border-radius:14px;padding:.7rem 1rem;min-height:3rem;font-weight:700}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:4px solid var(--acc);outline-offset:2px}
+.pri{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.big{width:100%;min-height:3.6rem;font-size:1.1rem}
+.sm{min-height:2.4rem;padding:.35rem .7rem;font-size:.85rem}
+.danger{background:var(--bad);color:#fff;border-color:var(--bad)}
+.del{border-color:var(--line);color:var(--bad)}
+label{display:block;font-weight:700;margin:.7rem 0 .25rem}
+input,select,textarea{width:100%;padding:.7rem .8rem;border:2px solid var(--ink);border-radius:12px;background:var(--surf);min-height:3rem}
+textarea{min-height:7rem}
+.seg{display:flex;gap:.4rem;flex-wrap:wrap}
+.seg button{flex:1;min-width:6.5rem}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.tag{display:inline-block;padding:.1rem .6rem;border-radius:99px;font-weight:700;font-size:.85rem}
+.ok{background:var(--okbg);color:var(--ok)}.warn{background:var(--warnbg);color:var(--warn)}.bad{background:var(--badbg);color:var(--bad)}
+.alert{border-radius:var(--r);padding:1rem;margin:.7rem 0;font-weight:700}
+.bar{height:1rem;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);transition:width .3s}
+.med{display:flex;gap:.8rem;align-items:center}
+.med .tk{min-width:7.5rem}
+.med.done{background:var(--okbg);border-color:var(--ok)}
+.med.done .tk{background:var(--ok);color:#fff;border-color:var(--ok)}
+.chk{display:flex;align-items:center;gap:.7rem;margin:.3rem 0;font-weight:400}
+.chk input{width:1.7rem;height:1.7rem;min-height:0;flex:none}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--surf);border-top:2px solid var(--line);display:flex;justify-content:center;padding:.4rem .4rem calc(.4rem + env(safe-area-inset-bottom,0px))}
+nav div{display:flex;gap:.3rem;width:100%;max-width:640px}
+nav button{flex:1;border:2px solid transparent;font-size:.8rem;padding:.4rem .1rem;min-height:3.4rem;line-height:1.2}
+nav button[aria-current="page"]{background:var(--acc);color:var(--acc-ink)}
+nav svg{display:block;margin:0 auto 2px}
+.spark{width:100%;height:auto}
+.hist{display:flex;justify-content:space-between;gap:.6rem;padding:.6rem 0;border-top:1px solid var(--line);align-items:center}
+.big-n{font-size:2.2rem;font-weight:700;line-height:1}
+.mood button{flex:1;min-width:4.4rem}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:.6rem}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:6rem;background:var(--ink);color:var(--bg);padding:.7rem 1.2rem;border-radius:99px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90%;text-align:center}
+#toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<nav aria-label="Main"><div id="nav"></div></nav>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+var KEY='steady_v1',SLOTS=['Morning','Afternoon','Evening','Bedtime'];
+var VT={bp:{n:'Blood pressure',u:'mmHg'},glu:{n:'Blood sugar',u:'mg/dL'},hr:{n:'Pulse',u:'beats/min'},wt:{n:'Weight',u:'lb'}};
+var SYM=['Dizziness','Headache','Pain','Swelling in legs','Poor appetite','Fall today','Short of breath','Chest pain','Confusion','Sudden weakness or trouble speaking'];
+var URGENT=['Short of breath','Chest pain','Confusion','Sudden weakness or trouble speaking'];
+var MOODS=['Poor','Low','Okay','Good','Great'];
+var S=load(),tab='today',lt='bp',ic={};
+function load(){var d={name:'',size:1,meds:[],taken:{},vitals:[],ci:{},appts:[],contacts:[],info:{conditions:'',allergies:'',doctor:'',blood:''}};
+try{var r=JSON.parse(localStorage.getItem(KEY));if(r)for(var k in r)d[k]=r[k]}catch(x){}return d}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(x){}}
+function e(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function ds(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function $(i){return document.getElementById(i)}
+function val(i){var x=$(i);return x?x.value.trim():''}
+function toast(m){var t=$('toast');t.textContent=m;t.className='on';clearTimeout(toast.h);toast.h=setTimeout(function(){t.className=''},2600)}
+function fmtDT(t){var d=new Date(t);return d.toLocaleDateString(undefined,{month:'short',day:'numeric'})+', '+d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})}
+function fmtV(v){return v.type==='bp'?v.v1+'/'+v.v2:String(v.v1)}
+function today(){return S.ci[ds()]||(S.ci[ds()]={mood:null,sleep:'',water:0,sym:[],note:''})}
+
+function status(t,a,b){
+if(t==='bp'){if(a>=180||b>=120)return['bad','Very high. Call your doctor now. If you have chest pain or trouble breathing, call 911.'];
+if(a>=140||b>=90)return['warn','Higher than usual. Rest, recheck in 5 minutes, and tell your doctor.'];
+if(a<90||b<60)return['warn','Lower than usual. Sit down, drink water, and tell your doctor if you feel dizzy.'];
+return['ok','In a typical range.']}
+if(t==='glu'){if(a<54)return['bad','Very low. Take fast sugar (juice or glucose tabs) and call for help if you don’t improve.'];
+if(a<70)return['warn','Low. Take 15 g of fast sugar and recheck in 15 minutes.'];
+if(a>300)return['bad','Very high. Call your doctor today.'];
+if(a>180)return['warn','High. Drink water and follow your care plan.'];
+return['ok','In a typical range.']}
+if(t==='hr'){if(a<40||a>130)return['bad','Outside a safe range. Call your doctor now.'];
+if(a<50||a>110)return['warn','Outside a typical resting range. Rest and recheck.'];
+return['ok','In a typical resting range.']}
+return['ok','Saved. Watch the trend over weeks.']}
+
+var ICON={today:'<path d="M3 11l9-8 9 8v10H3z"/>',log:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',meds:'<rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-35 12 12)"/><path d="M9.5 8.5l5 5" />',well:'<path d="M12 21s-8-5-8-11a4.5 4.5 0 018-2.5A4.5 4.5 0 0120 10c0 6-8 11-8 11z"/>',care:'<path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/>'};
+var TABS=[['today','Today'],['log','Vitals'],['meds','Medicines'],['well','Feeling'],['care','Care']];
+function nav(){$('nav').innerHTML=TABS.map(function(t){return'<button data-act="tab" data-v="'+t[0]+'"'+(tab===t[0]?' aria-current="page"':'')+'><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICON[t[0]]+'</svg>'+t[1]+'</button>'}).join('')}
+
+function head(t,sub){return'<div class="top"><div><h1>'+t+'</h1><p class="mute">'+sub+'</p></div><div class="seg" role="group" aria-label="Text size" style="flex:none;flex-wrap:nowrap">'+[1,1.15,1.3].map(function(z,i){return'<button class="sm" style="min-width:0" data-act="size" data-v="'+z+'" aria-pressed="'+(S.size===z)+'" aria-label="Text size '+(i+1)+'">'+['A','A','A'][i].replace('A','<span style="font-size:'+(0.85+i*.2)+'em">A</span>')+'</button>'}).join('')+'</div></div>'}
+
+function vToday(){var d=ds();return S.vitals.filter(function(v){return ds(new Date(v.t))===d})}
+function vToday_flag(){var f=null;vToday().forEach(function(v){var s=status(v.type,+v.v1,+v.v2);if(s[0]==='bad')f=[v,s];else if(s[0]==='warn'&&!f)f=[v,s]});return f}
+function symUrgent(){return today().sym.filter(function(s){return URGENT.indexOf(s)>-1})}
+function urgentBanner(){var u=symUrgent();return u.length?'<div class="alert bad" role="alert">You reported: '+e(u.join(', '))+'. These can be signs of an emergency.<br><a href="tel:911"><button class="danger big" style="margin-top:.6rem">Call 911</button></a></div>':''}
+
+function vToday_view(){
+var h=new Date().getHours(),g=h<12?'Good morning':h<18?'Good afternoon':'Good evening';
+var nm=S.name?', '+e(S.name):'';
+var med=S.meds,d=ds(),tk=S.taken[d]||{},n=med.filter(function(m){return tk[m.id]}).length;
+var o=head(g+nm,new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'}));
+if(!S.name)o+='<div class="card"><label for="nm">What should we call you?</label><div class="row"><input id="nm" class="grow" autocomplete="given-name"><button class="pri" data-act="name">Save</button></div></div>';
+o+=urgentBanner();
+var f=vToday_flag();if(f)o+='<div class="alert '+f[1][0]+'">'+VT[f[0].type].n+' '+e(fmtV(f[0]))+': '+e(f[1][1])+'</div>';
+o+='<div class="card"><div class="row"><div class="grow"><span class="big-n">'+n+' of '+med.length+'</span><p class="mute">medicines taken today</p></div></div><div class="bar" style="margin-top:.6rem"><i style="width:'+(med.length?n/med.length*100:0)+'%"></i></div></div>';
+if(!med.length)o+='<div class="card"><p>No medicines yet.</p><button class="pri big" data-act="tab" data-v="meds">Add your first medicine</button></div>';
+SLOTS.forEach(function(s){var L=med.filter(function(m){return m.slot===s});if(!L.length)return;
+o+='<h2>'+s+'</h2>'+L.map(function(m){var on=!!tk[m.id];return'<div class="card med'+(on?' done':'')+'"><div class="grow"><strong>'+e(m.name)+'</strong><p class="mute">'+e(m.dose)+(m.note?' · '+e(m.note):'')+'</p></div><button class="tk" data-act="take" data-id="'+m.id+'" aria-pressed="'+on+'">'+(on?'Taken ✓':'Mark taken')+'</button></div>'}).join('')});
+o+='<h2>Today’s checks</h2><div class="card"><div class="row"><div class="grow"><strong>Vitals</strong><p class="mute">'+vToday().length+' logged today</p></div><button data-act="tab" data-v="log">Log now</button></div></div>';
+var c=today();o+='<div class="card"><div class="row"><div class="grow"><strong>How I feel</strong><p class="mute">'+(c.mood!=null?'Feeling '+MOODS[c.mood].toLowerCase()+', '+c.water+' glasses of water':'Not checked in yet')+'</p></div><button data-act="tab" data-v="well">Check in</button></div></div>';
+var nx=S.appts.filter(function(a){return a.date>=d}).sort(function(a,b){return(a.date+a.time).localeCompare(b.date+b.time)})[0];
+o+='<div class="card"><strong>Next appointment</strong><p>'+(nx?e(nx.title)+' on '+fmtD(nx.date)+(nx.time?' at '+fmtT(nx.time):''):'None scheduled')+'</p></div>';
+return o}
+function fmtD(s){var p=s.split('-');return new Date(+p[0],p[1]-1,+p[2]).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'})}
+function fmtT(s){var p=s.split(':');return new Date(2000,0,1,+p[0],+p[1]).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})}
+
+function spark(L,t){if(L.length<2)return'<p class="mute">Log at least two readings to see a trend.</p>';
+var W=300,H=90,P=8,a=L.map(function(v){return+v.v1}),b=t==='bp'?L.map(function(v){return+v.v2}):[];
+var all=a.concat(b),mn=Math.min.apply(0,all),mx=Math.max.apply(0,all);if(mn===mx){mn-=1;mx+=1}
+function pts(A){return A.map(function(y,i){return(P+i*(W-2*P)/(A.length-1)).toFixed(1)+','+(H-P-(y-mn)/(mx-mn)*(H-2*P)).toFixed(1)}).join(' ')}
+var s='<svg class="spark" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Trend of last '+L.length+' readings"><polyline fill="none" stroke="var(--acc)" stroke-width="3" stroke-linejoin="round" points="'+pts(a)+'"/>';
+if(b.length)s+='<polyline fill="none" stroke="var(--mute)" stroke-width="3" stroke-dasharray="6 5" points="'+pts(b)+'"/>';
+return s+'</svg><p class="mute">Last '+L.length+' readings: '+mn+' to '+mx+(b.length?' (solid = top number, dashed = bottom)':'')+'</p>'}
+
+function vLog(){
+var o=head('Vitals','Take a reading, then write it here.');
+o+='<div class="seg" role="group" aria-label="Reading type">'+Object.keys(VT).map(function(k){return'<button data-act="lt" data-v="'+k+'" aria-pressed="'+(lt===k)+'">'+VT[k].n+'</button>'}).join('')+'</div>';
+o+='<div class="card"><h2 style="margin-top:0">New '+VT[lt].n.toLowerCase()+' reading</h2>';
+if(lt==='bp')o+='<div class="row"><div class="grow"><label for="v1">Top number</label><input id="v1" type="number" inputmode="numeric" min="50" max="300"></div><div class="grow"><label for="v2">Bottom number</label><input id="v2" type="number" inputmode="numeric" min="30" max="200"></div></div>';
+else o+='<label for="v1">'+VT[lt].n+' ('+VT[lt].u+')</label><input id="v1" type="number" inputmode="decimal" step="any">';
+if(lt==='glu')o+='<label for="v3">When</label><select id="v3"><option>Before a meal</option><option>After a meal</option><option>Fasting</option><option>Bedtime</option></select>';
+o+='<button class="pri big" style="margin-top:1rem" data-act="addv">Save reading</button></div>';
+var L=S.vitals.filter(function(v){return v.type===lt}).sort(function(a,b){return a.t-b.t});
+o+='<div class="card"><strong>Trend</strong>'+spark(L.slice(-14),lt)+'</div>';
+o+='<h2>History</h2><div class="card">'+(L.length?L.slice().reverse().slice(0,20).map(function(v){var s=status(v.type,+v.v1,+v.v2);return'<div class="hist"><div><strong style="font-size:1.2rem">'+e(fmtV(v))+'</strong> <span class="mute">'+VT[v.type].u+(v.v3?' · '+e(v.v3):'')+'</span><br><span class="mute">'+fmtDT(v.t)+'</span></div><div style="text-align:right"><span class="tag '+s[0]+'">'+({ok:'Typical',warn:'Check',bad:'Urgent'})[s[0]]+'</span><br><button class="sm del" data-act="delv" data-id="'+v.id+'" style="margin-top:.3rem" aria-label="Delete reading">Delete</button></div></div>'}).join(''):'<p class="mute">No readings yet. Your first one will appear here.</p>')+'</div>';
+return o+'<p class="mute">Ranges are general guides for adults. Your doctor’s targets for you come first.</p>'}
+
+function vMeds(){
+var o=head('Medicines','Everything you take, and when.');
+o+='<div class="card"><h2 style="margin-top:0">Add a medicine</h2><label for="mn">Name</label><input id="mn" placeholder="e.g. Lisinopril"><label for="md">Dose</label><input id="md" placeholder="e.g. 10 mg, 1 tablet"><label for="ms">Time of day</label><select id="ms">'+SLOTS.map(function(s){return'<option>'+s+'</option>'}).join('')+'</select><label for="mt">Note (optional)</label><input id="mt" placeholder="e.g. with food"><button class="pri big" style="margin-top:1rem" data-act="addm">Add medicine</button></div>';
+o+='<h2>Your list</h2>';
+if(!S.meds.length)o+='<div class="card"><p class="mute">Nothing here yet. Add each medicine above.</p></div>';
+SLOTS.forEach(function(s){S.meds.filter(function(m){return m.slot===s}).forEach(function(m){o+='<div class="card row"><div class="grow"><strong>'+e(m.name)+'</strong><p class="mute">'+e(m.dose)+' · '+s+(m.note?' · '+e(m.note):'')+'</p></div><button class="sm del" data-act="delm" data-id="'+m.id+'" aria-label="Remove '+e(m.name)+'">Remove</button></div>'})});
+return o}
+
+function vWell(){
+var c=today(),o=head('How I feel','A quick daily check-in.')+urgentBanner();
+o+='<h2>Mood</h2><div class="seg mood" role="group" aria-label="Mood">'+MOODS.map(function(m,i){return'<button data-act="mood" data-v="'+i+'" aria-pressed="'+(c.mood===i)+'">'+m+'</button>'}).join('')+'</div>';
+o+='<h2>Water</h2><div class="card row"><button data-act="water" data-v="-1" aria-label="One less glass">−</button><div class="grow" style="text-align:center"><span class="big-n">'+c.water+'</span><p class="mute">glasses today (goal: 6 to 8)</p></div><button class="pri" data-act="water" data-v="1" aria-label="One more glass">+</button></div>';
+o+='<h2>Sleep</h2><div class="card"><label for="sl" style="margin-top:0">Hours slept last night</label><input id="sl" type="number" inputmode="decimal" step="0.5" min="0" max="24" value="'+e(c.sleep)+'"></div>';
+o+='<h2>Symptoms today</h2><div class="card">'+SYM.map(function(s,i){return'<label class="chk"><input type="checkbox" data-sym="'+i+'"'+(c.sym.indexOf(s)>-1?' checked':'')+'> '+e(s)+'</label>'}).join('')+'<label for="nt">Notes</label><textarea id="nt" placeholder="Anything your doctor should know">'+e(c.note)+'</textarea><button class="pri big" style="margin-top:1rem" data-act="savew">Save check-in</button></div>';
+return o}
+
+function vCare(){
+var o=head('Care','Appointments, contacts, and key health facts.');
+o+='<div class="card"><button class="danger big" data-act="call911">Emergency: call 911</button><p class="mute" style="margin-top:.6rem">Call 911 for chest pain, trouble breathing, sudden weakness, trouble speaking, or a serious fall.</p></div>';
+o+='<h2>Medical ID</h2><div class="card">'+[['conditions','Health conditions'],['allergies','Allergies'],['doctor','Doctor and phone'],['blood','Blood type']].map(function(f){return'<label for="i_'+f[0]+'">'+f[1]+'</label><input id="i_'+f[0]+'" data-info="'+f[0]+'" value="'+e(S.info[f[0]])+'">'}).join('')+'<p class="mute">Saved as you type, on this device only.</p></div>';
+o+='<h2>Emergency contacts</h2>';
+S.contacts.forEach(function(c){o+='<div class="card row"><div class="grow"><strong>'+e(c.name)+'</strong><p class="mute">'+e(c.rel)+' · '+e(c.phone)+'</p></div><a href="tel:'+e(c.phone.replace(/[^\d+]/g,''))+'"><button class="pri">Call</button></a><button class="sm del" data-act="delc" data-id="'+c.id+'" aria-label="Remove '+e(c.name)+'">Remove</button></div>'});
+o+='<div class="card"><label for="cn" style="margin-top:0">Name</label><input id="cn"><label for="cr">Relationship</label><input id="cr" placeholder="e.g. Daughter"><label for="cp">Phone</label><input id="cp" type="tel" inputmode="tel"><button class="big" style="margin-top:1rem" data-act="addc">Add contact</button></div>';
+o+='<h2>Appointments</h2>';
+S.appts.slice().sort(function(a,b){return(a.date+a.time).localeCompare(b.date+b.time)}).forEach(function(a){var past=a.date<ds();o+='<div class="card row" style="'+(past?'opacity:.6':'')+'"><div class="grow"><strong>'+e(a.title)+'</strong><p class="mute">'+fmtD(a.date)+(a.time?' at '+fmtT(a.time):'')+(a.place?' · '+e(a.place):'')+'</p></div><button class="sm del" data-act="dela" data-id="'+a.id+'" aria-label="Remove appointment">Remove</button></div>'});
+o+='<div class="card"><label for="at" style="margin-top:0">What for</label><input id="at" placeholder="e.g. Heart check-up"><div class="row"><div class="grow"><label for="ad">Date</label><input id="ad" type="date"></div><div class="grow"><label for="atm">Time</label><input id="atm" type="time"></div></div><label for="ap">Place (optional)</label><input id="ap"><button class="big" style="margin-top:1rem" data-act="adda">Add appointment</button></div>';
+o+='<h2>Doctor’s report</h2><div class="card"><p>Make a one-page summary of the last 7 days to show your doctor or family.</p><button class="pri big" data-act="report" style="margin-top:.6rem">Create report</button><div id="rep"></div></div>';
+o+='<div class="card"><button class="del big" data-act="wipe">Erase all my data</button></div>';
+return o}
+
+function report(){
+var L=[],now=Date.now(),wk=now-7*864e5,I=S.info;
+L.push('HEALTH SUMMARY, '+new Date().toLocaleDateString()+(S.name?' for '+S.name:''));
+if(I.conditions)L.push('Conditions: '+I.conditions);if(I.allergies)L.push('Allergies: '+I.allergies);if(I.doctor)L.push('Doctor: '+I.doctor);
+L.push('','MEDICINES');S.meds.forEach(function(m){L.push('- '+m.name+', '+m.dose+', '+m.slot.toLowerCase()+(m.note?' ('+m.note+')':''))});if(!S.meds.length)L.push('- none listed');
+var tot=0,got=0;for(var i=0;i<7;i++){var k=ds(new Date(now-i*864e5)),t=S.taken[k]||{};S.meds.forEach(function(m){tot++;if(t[m.id])got++})}
+L.push('Taken on schedule (7 days): '+(tot?Math.round(got/tot*100)+'%':'n/a'),'','VITALS, LAST 7 DAYS');
+Object.keys(VT).forEach(function(k){var A=S.vitals.filter(function(v){return v.type===k&&v.t>=wk}).sort(function(a,b){return a.t-b.t});if(A.length)L.push(VT[k].n+' ('+VT[k].u+'): '+A.map(function(v){return fmtV(v)+' on '+new Date(v.t).toLocaleDateString(undefined,{month:'numeric',day:'numeric'})}).join('; '))});
+L.push('','SYMPTOMS AND NOTES');var any=false;for(var j=6;j>=0;j--){var kk=ds(new Date(now-j*864e5)),c=S.ci[kk];if(c&&(c.sym.length||c.note)){any=true;L.push(kk+': '+(c.sym.join(', ')||'no symptoms')+(c.note?'. '+c.note:''))}}
+if(!any)L.push('None recorded.');
+return L.join('\n')}
+
+function render(){nav();var v={today:vToday_view,log:vLog,meds:vMeds,well:vWell,care:vCare};$('app').innerHTML=v[tab]()}
+function applySize(){document.documentElement.style.fontSize=(19*S.size)+'px'}
+
+var A={
+tab:function(el){tab=el.dataset.v;render();window.scrollTo(0,0)},
+size:function(el){S.size=+el.dataset.v;save();applySize();render()},
+name:function(){var n=val('nm');if(n){S.name=n;save();render()}},
+take:function(el){var d=ds();S.taken[d]=S.taken[d]||{};S.taken[d][el.dataset.id]=!S.taken[d][el.dataset.id];save();render()},
+lt:function(el){lt=el.dataset.v;render()},
+addv:function(){var a=parseFloat(val('v1')),b=parseFloat(val('v2'));
+if(isNaN(a)||(lt==='bp'&&isNaN(b)))return toast(lt==='bp'?'Enter both numbers':'Enter a number');
+var v={id:uid(),t:Date.now(),type:lt,v1:a,v2:lt==='bp'?b:null,v3:lt==='glu'?val('v3'):''};S.vitals.push(v);save();
+var s=status(lt,a,b);render();toast(s[0]==='ok'?'Saved. '+s[1]:'Saved. '+s[1]);},
+delv:function(el){if(confirm('Delete this reading?')){S.vitals=S.vitals.filter(function(v){return v.id!==el.dataset.id});save();render()}},
+addm:function(){var n=val('mn');if(!n)return toast('Enter the medicine name');S.meds.push({id:uid(),name:n,dose:val('md')||'As directed',slot:val('ms'),note:val('mt')});save();render();toast('Medicine added')},
+delm:function(el){if(confirm('Remove this medicine?')){S.meds=S.meds.filter(function(m){return m.id!==el.dataset.id});save();render()}},
+mood:function(el){today().mood=+el.dataset.v;save();render()},
+water:function(el){var c=today();c.water=Math.max(0,c.water+ +el.dataset.v);save();render()},
+savew:function(){var c=today();c.sleep=val('sl');c.note=val('nt');c.sym=[].slice.call(document.querySelectorAll('[data-sym]')).filter(function(x){return x.checked}).map(function(x){return SYM[+x.dataset.sym]});save();render();window.scrollTo(0,0);toast('Check-in saved')},
+call911:function(){location.href='tel:911'},
+addc:function(){var n=val('cn'),p=val('cp');if(!n||!p)return toast('Enter a name and phone');S.contacts.push({id:uid(),name:n,rel:val('cr')||'Contact',phone:p});save();render()},
+delc:function(el){S.contacts=S.contacts.filter(function(c){return c.id!==el.dataset.id});save();render()},
+adda:function(){var t=val('at'),d=val('ad');if(!t||!d)return toast('Enter what for and a date');S.appts.push({id:uid(),title:t,date:d,time:val('atm'),place:val('ap')});save();render()},
+dela:function(el){S.appts=S.appts.filter(function(a){return a.id!==el.dataset.id});save();render()},
+report:function(){$('rep').innerHTML='<label for="rt">Summary</label><textarea id="rt" readonly style="min-height:16rem">'+e(report())+'</textarea><button class="big" style="margin-top:.6rem" data-act="copy">Copy report</button>'},
+copy:function(){var t=$('rt');t.select();try{navigator.clipboard.writeText(t.value).then(function(){toast('Report copied')},function(){document.execCommand('copy');toast('Report copied')})}catch(x){try{document.execCommand('copy');toast('Report copied')}catch(y){toast('Select the text and copy it')}}},
+wipe:function(){if(confirm('Erase everything saved in Steady on this device?')){try{localStorage.removeItem(KEY)}catch(x){}S=load();tab='today';applySize();render()}}
+};
+document.addEventListener('click',function(ev){var el=ev.target.closest('[data-act]');if(el&&A[el.dataset.act])A[el.dataset.act](el)});
+document.addEventListener('input',function(ev){var f=ev.target.dataset&&ev.target.dataset.info;if(f){S.info[f]=ev.target.value;save()}});
+applySize();render();
+})();
+</script>
+</body>
+</html>
